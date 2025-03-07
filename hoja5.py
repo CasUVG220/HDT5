@@ -59,3 +59,26 @@ def ejecutar_simulacion(num_procesos, intervalo, RAM_size=100, CPU_capacity=2, i
     desviacion = statistics.stdev(tiempos_totales) if len(tiempos_totales) > 1 else 0
     return promedio, desviacion
     
+def graficar_resultados(cantidades, resultados):
+    """Genera una grafica de numero de procesos vs tiempo promedio."""
+    tiempos_promedio = [r[0] for r in resultados]
+    desviaciones = [r[1] for r in resultados]
+
+    plt.errorbar(cantidades, tiempos_promedio, yerr=desviaciones, fmt='o-', capsize=5)
+    plt.xlabel("Numero de procesos")
+    plt.ylabel("Tiempo promedio en el sistema")
+    plt.title("Numero de procesos vs. Tiempo promedio")
+    plt.grid(True)
+    plt.show()
+
+# Ejecutar la simulación con configuración inicial (RAM = 100, CPU = 1 núcleo, 3 instrucciones por ciclo)
+cantidades = [25, 50, 100, 150, 200]
+intervalo = 10
+
+resultados = []
+for num_procesos in cantidades:
+    promedio, desviacion = ejecutar_simulacion(num_procesos, intervalo)
+    resultados.append((promedio, desviacion))
+    print(f"Procesos: {num_procesos}, Tiempo promedio: {promedio:.2f}, Desviacion estandar: {desviacion:.2f}")
+
+graficar_resultados(cantidades, resultados)
