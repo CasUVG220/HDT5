@@ -41,3 +41,21 @@ def generar_procesos(env, RAM, CPU, intervalo, num_procesos):
     for i in range(num_procesos):
         env.process(proceso(env, f"Proceso-{i+1}", RAM, CPU))
         yield env.timeout(random.expovariate(1.0 / intervalo))
+
+def ejecutar_simulacion(num_procesos, intervalo, RAM_size=100, CPU_capacity=2, instrucciones_por_ciclo=3):
+    """Ejecuta la simulacion con los parametros especificados."""
+    global tiempos_totales
+    tiempos_totales = []
+
+    env = simpy.Environment()
+    RAM = simpy.Container(env, init=RAM_size, capacity=RAM_size)
+    CPU = simpy.Resource(env, capacity=CPU_capacity)
+
+    env.process(generar_procesos(env, RAM, CPU, intervalo, num_procesos))
+    env.run()
+
+    # Calcular estadísticas
+    promedio = statistics.mean(tiempos_totales) if tiempos_totales else 0
+    desviacion = statistics.stdev(tiempos_totales) if len(tiempos_totales) > 1 else 0
+    return promedio, desviacion
+    
